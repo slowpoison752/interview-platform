@@ -38,7 +38,7 @@ jobs:
       - name: Install Node.js dependencies
         run: |
           cd frontend
-          npm ci
+          npm install
 
       - name: Run backend tests
         run: |
@@ -80,6 +80,7 @@ jobs:
           railway up --service ${{ secrets.RAILWAY_SERVICE_NAME || 'resume-parser' }}
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
 
       - name: Get deployment URL
         run: |
