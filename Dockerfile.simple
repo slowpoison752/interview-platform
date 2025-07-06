@@ -18,7 +18,7 @@ FROM python:3.11-alpine
 WORKDIR /app
 
 # Install minimal system dependencies
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc musl-dev curl
 
 # Copy backend requirements and install
 COPY backend/requirements.txt .
@@ -33,9 +33,15 @@ COPY --from=frontend-build /app/frontend/build /app/static
 # Copy static HTML file for health checks
 COPY backend/static/index.html /app/static/index.html
 
+# Copy health check script
+COPY healthcheck.sh /app/healthcheck.sh
+RUN chmod +x /app/healthcheck.sh
+
 # Create startup script
 RUN echo '#!/bin/sh\n\
-uvicorn main:app --host 0.0.0.0 --port 8000' > /app/start.sh && chmod +x /app/start.sh
+echo "Starting Resume Parser Platform..."\n\
+echo "Waiting for application to start..."\n\
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload' > /app/start.sh && chmod +x /app/start.sh
 
 EXPOSE 8000
 

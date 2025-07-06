@@ -22,6 +22,7 @@ RUN apk add --no-cache \
     gcc \
     musl-dev \
     nginx \
+    curl \
     && rm -rf /var/cache/apk/*
 
 # Copy backend requirements and install
@@ -37,13 +38,19 @@ COPY --from=frontend-build /app/frontend/build /app/static
 # Copy static HTML file for health checks
 COPY backend/static/index.html /app/static/index.html
 
+# Copy health check script
+COPY healthcheck.sh /app/healthcheck.sh
+RUN chmod +x /app/healthcheck.sh
+
 # Copy nginx configuration
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create startup script
 RUN echo '#!/bin/sh\n\
+echo "Starting Resume Parser Platform..."\n\
 nginx &\n\
-uvicorn main:app --host 0.0.0.0 --port 8000\n\
+echo "Nginx started, starting FastAPI..."\n\
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload\n\
 wait' > /app/start.sh && chmod +x /app/start.sh
 
 EXPOSE 8000
