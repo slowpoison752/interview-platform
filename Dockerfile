@@ -34,6 +34,9 @@ COPY backend/ .
 # Copy built frontend from previous stage
 COPY --from=frontend-build /app/frontend/build /app/static
 
+# Copy static HTML file for health checks
+COPY backend/static/index.html /app/static/index.html
+
 # Copy nginx configuration
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 

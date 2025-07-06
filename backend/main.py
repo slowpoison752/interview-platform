@@ -20,9 +20,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files if they exist
+# Mount static files if they exist (but not for API routes)
 if os.path.exists("/app/static"):
-    app.mount("/", StaticFiles(directory="/app/static", html=True), name="static")
+    app.mount("/static", StaticFiles(directory="/app/static"), name="static")
+
+@app.get("/", response_class=FileResponse)
+async def serve_index():
+    """Serve the main HTML page"""
+    if os.path.exists("/app/static/index.html"):
+        return FileResponse("/app/static/index.html")
+    return {"message": "Resume Parser Platform is running!"}
 
 def extract_text_from_pdf(pdf_file: bytes) -> str:
     """Extract text from PDF bytes"""
@@ -130,8 +137,12 @@ async def upload_resume(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
-@app.get("/api")
+@app.get("/")
 async def root():
+    return {"message": "Resume Parser Platform is running!"}
+
+@app.get("/api")
+async def api_root():
     return {"message": "Resume Parser API is running!"}
 
 @app.get("/health")

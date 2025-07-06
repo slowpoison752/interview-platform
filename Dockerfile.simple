@@ -30,6 +30,9 @@ COPY backend/ .
 # Copy built frontend from previous stage
 COPY --from=frontend-build /app/frontend/build /app/static
 
+# Copy static HTML file for health checks
+COPY backend/static/index.html /app/static/index.html
+
 # Create startup script
 RUN echo '#!/bin/sh\n\
 uvicorn main:app --host 0.0.0.0 --port 8000' > /app/start.sh && chmod +x /app/start.sh
