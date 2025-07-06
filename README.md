@@ -127,7 +127,38 @@ interview-platform/
 
 ## Deployment
 
-### Railway Deployment
+### Option 1: GitHub Actions (Recommended)
+
+#### Setup GitHub Secrets
+
+1. **Get Railway Token:**
+   ```bash
+   railway login
+   railway whoami
+   ```
+
+2. **Add GitHub Secrets:**
+   - Go to your GitHub repository → Settings → Secrets and variables → Actions
+   - Add these secrets:
+     - `RAILWAY_TOKEN`: Your Railway authentication token
+     - `RAILWAY_PROJECT_ID`: Your Railway project ID (optional)
+     - `RAILWAY_SERVICE_NAME`: Your Railway service name (optional, defaults to 'resume-parser')
+
+#### Automatic Deployment
+
+- **Push to main/master branch**: Automatically triggers build, test, and deploy
+- **Pull requests**: Run tests but don't deploy
+- **Manual deployment**: Use the "Manual Deploy to Railway" workflow
+
+#### Workflow Features
+
+- ✅ **Automated Testing**: Runs backend and frontend tests
+- ✅ **Docker Build**: Builds optimized container
+- ✅ **Railway Deployment**: Automatic deployment to Railway
+- ✅ **Health Checks**: Verifies deployment success
+- ✅ **Manual Triggers**: Deploy specific environments
+
+### Option 2: Manual Railway Deployment
 
 1. **Install Railway CLI:**
    ```bash
