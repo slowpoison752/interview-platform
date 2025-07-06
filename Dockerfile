@@ -6,8 +6,8 @@ WORKDIR /app/frontend
 # Copy frontend files
 COPY frontend/package*.json ./
 
-# Install dependencies (handle missing package-lock.json)
-RUN if [ -f package-lock.json ]; then npm ci --only=production; else npm install --only=production; fi
+# Install dependencies
+RUN npm install --only=production --legacy-peer-deps
 
 COPY frontend/ ./
 RUN npm run build
