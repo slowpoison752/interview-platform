@@ -128,6 +128,10 @@ async def upload_resume(file: UploadFile = File(...)):
 async def root():
     return {"message": "Resume Parser API is running!"}
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "message": "Resume Parser API is running!"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000) 

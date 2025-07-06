@@ -34,7 +34,9 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('/api/upload-resume', formData, {
+      // Use environment variable for API URL in production
+      const apiUrl = process.env.REACT_APP_API_URL || '/api';
+      const response = await axios.post(`${apiUrl}/upload-resume`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
