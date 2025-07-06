@@ -1,22 +1,28 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import PyPDF2
 import io
 import re
 from typing import Dict, Any
 import json
+import os
 
 app = FastAPI(title="Resume Parser API", version="1.0.0")
 
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React dev server
+    allow_origins=["*"],  # Allow all origins for Railway deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files if they exist
+if os.path.exists("/app/static"):
+    app.mount("/", StaticFiles(directory="/app/static", html=True), name="static")
 
 def extract_text_from_pdf(pdf_file: bytes) -> str:
     """Extract text from PDF bytes"""
@@ -124,12 +130,16 @@ async def upload_resume(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
-@app.get("/")
+@app.get("/api")
 async def root():
     return {"message": "Resume Parser API is running!"}
 
 @app.get("/health")
 async def health_check():
+    return {"status": "healthy", "message": "Resume Parser API is running!"}
+
+@app.get("/api/health")
+async def api_health_check():
     return {"status": "healthy", "message": "Resume Parser API is running!"}
 
 if __name__ == "__main__":
